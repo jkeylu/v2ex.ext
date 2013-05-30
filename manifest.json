@@ -1,0 +1,67 @@
+{
+  "name": "v2ex.ext",
+  "version": "0.1",
+  "manifest_version": 2,
+
+  "description": "V2EX Extension",
+  "homepage_url": "https://github.com/jkeylu/v2ex.ext",
+
+  "icons": {
+    "16": "v2ex.ico",
+    "48": "v2ex.ico",
+    "128": "v2ex.ico"
+  },
+
+  "permissions": [
+    "*://*.v2ex.com/",
+    "*://v2ex.com/"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.v2ex.com/*",
+        "*://v2ex.com/*"
+      ],
+      "css": [
+        "css/jquery.powertip.css",
+        "css/site.ext.css"
+      ],
+      "js": [
+        "lib/jquery-2.0.0.js",
+        "lib/jquery.powertip.js",
+        "lib/moment.js",
+        "lib/juicer.js",
+        "js/utils.js",
+        "js/site.ext.js"
+      ],
+      "run_at": "document_end"
+
+    }, {
+      "matches": [
+        "*://www.v2ex.com/t/*",
+        "*://v2ex.com/t/*"
+      ],
+      "css": ["css/topic.ext.css"],
+      "js": [
+        "lib/async.js",
+        "js/topic.ext.js"
+      ],
+      "run_at": "document_end"
+
+    }, {
+      "matches": [
+        "*://www.v2ex.com/new/*",
+        "*://v2ex.com/new/*"
+      ],
+      "css": [],
+      "js": ["js/new.ext.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "web_accessible_resources": [
+    "template/avatar_tip.tpl"
+  ]
+
+}
