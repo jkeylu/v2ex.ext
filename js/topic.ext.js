@@ -53,7 +53,9 @@ TopicExt.prototype.init = function () {
     self.repliesByReplyId[reply.replyId] = reply;
   });
 
-  self.addWBSGHTCButton();
+  if (self.newReplyBox) {
+    self.addWBSGHTCButton();
+  }
 };
 
 
@@ -128,7 +130,9 @@ TopicExt.prototype.decomposeReply = function ($r) {
   reply.username = $usernameTag.text();
 
   reply.$foldSign = self.createFoldSign(reply.username, reply.replyId);
-  $usernameTag.after(' [', reply.$foldSign, ']');
+  var $foldSignWrap = $('<span class="fade small fold_sign_wrap"></span>')
+  $foldSignWrap.append('[ ', reply.$foldSign, ' ]');
+  $usernameTag.closest('strong').after('&nbsp;&nbsp;', $foldSignWrap);
 
   reply.$avatar = $('tr>td:first>img.avatar', $r);
   self.addAvatarTip(reply.$avatar, reply.username);

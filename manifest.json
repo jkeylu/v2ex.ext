@@ -1,6 +1,6 @@
 {
   "name": "v2ex.ext",
-  "version": "0.1",
+  "version": "0.1.1",
   "manifest_version": 2,
 
   "description": "V2EX Extension",
@@ -20,7 +20,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://www.v2ex.com/*",
+        "*://*.v2ex.com/*",
         "*://v2ex.com/*"
       ],
       "css": [
@@ -39,7 +39,7 @@
 
     }, {
       "matches": [
-        "*://www.v2ex.com/t/*",
+        "*://*.v2ex.com/t/*",
         "*://v2ex.com/t/*"
       ],
       "css": ["css/topic.ext.css"],
@@ -51,7 +51,7 @@
 
     }, {
       "matches": [
-        "*://www.v2ex.com/new/*",
+        "*://*.v2ex.com/new/*",
         "*://v2ex.com/new/*"
       ],
       "css": [],
