@@ -42,9 +42,13 @@
         "*://*.v2ex.com/t/*",
         "*://v2ex.com/t/*"
       ],
-      "css": ["css/topic.ext.css"],
+      "css": [
+        "css/jquery.atwho.css",
+        "css/topic.ext.css"
+      ],
       "js": [
         "lib/async.js",
+        "lib/jquery.atwho.js",
         "js/topic.ext.js"
       ],
       "run_at": "document_end"

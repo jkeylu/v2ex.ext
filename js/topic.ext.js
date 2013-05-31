@@ -17,6 +17,8 @@ function TopicExt() {
 
   this.fixReplyId = null;
 
+  this.usernames = [];
+
   this.init();
 }
 
@@ -47,15 +49,29 @@ TopicExt.prototype.init = function () {
 
     self.replies.push(reply);
     if (!self.repliesByUsername[reply.username]) {
+      self.usernames.push(reply.username);
       self.repliesByUsername[reply.username] = [];
     }
     self.repliesByUsername[reply.username].push(reply);
     self.repliesByReplyId[reply.replyId] = reply;
   });
 
+  if (self.usernames.indexOf(self.topic.by) == -1) {
+    self.usernames.push(self.topic.by);
+  }
+
   if (self.newReplyBox) {
+    self.extendReplyTextarea();
     self.addWBSGHTCButton();
   }
+};
+
+TopicExt.prototype.extendReplyTextarea = function () {
+  var self = this;
+  $('textarea#reply_content').atwho({
+    at: '@',
+    data: self.usernames
+  });
 };
 
 
