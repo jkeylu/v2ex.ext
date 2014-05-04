@@ -98,18 +98,8 @@ TopicExt.prototype.addMoreTopicButton = function () {
  */
 TopicExt.prototype.addWBSGHTCButton = function () {
   var self = this,
-      $btn = $('<a href="#">微博是个好图床</a>');
-
-  $btn.click(function () {
-    if ($('#weibotuchuang').length == 0) {
-      $tuchuang = $('<div class="cell" id="weibotuchuang"><iframe src="http://weibotuchuang.sinaapp.com" style="height:200px;width:100%;border:none;"></iframe></div>');
-      $('div.inner', self.newReplyBox).before($tuchuang);
-    }
-
-    return false;
-  });
-
-  $('form', self.newReplyBox).append($btn);
+      $btn = $('<a href=javascript:(function(){if(chrome.runtime)%7Bchrome.runtime.sendMessage(%22elhahjaainjmkkodbfbgipchhianbmep%22%2C%7Baction%3A%22show%22%7D%2Cfunction(response)%7Bconsole.log(%22response%3A%22%2Bresponse)%7D)%7Delse%7Bwindow.open(%27http%3A%2F%2Fweibotuchuang.sinaapp.com%27)%7D})();>微博是个好图床</a>');
+      $('form', self.newReplyBox).append($btn);
 };
 
 
