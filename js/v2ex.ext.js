@@ -4,6 +4,7 @@
  */
 
 // {{{ each and eachSeries
+// Reference: https://github.com/caolan/async
 
 function each(arr, iterator, callback) {
   callback = callback || function () {};
@@ -49,7 +50,8 @@ function eachSeries(arr, iterator, callback) {
 var utils = (function () {
   var user_info_by_username = {},
       user_info_by_id = {};
-  var utils = {
+
+  return {
     getUserByUsername: function (username, callback) {
       if (username in user_info_by_username) {
         return callback(null, user_info_by_username[username]);
@@ -87,14 +89,42 @@ var utils = (function () {
           callback(true);
         }
       });
+    },
+    formatDate: function (timestamp) {
+      try {
+        var t = new Date(timestamp * 1000);
+        return t.getFullYear() + '-' + t.getMonth() + '-' + t.getDate()
+          + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
+      } catch (e) {
+        return '';
+      }
+    },
+    checkUrl: function (url) {
+      if (url && url.substr(0, 4) != 'http') {
+        url = 'http://' + url;
+      }
+      return url;
+    },
+    formatTemplate: function (data) {
+      var str = '<p>V2EX 第 ' + data.id + ' 号会员</p>'
+        + '<p>加入于 ' + utils.formatDate(data.created) + '</p>'
+        + '<p>用户名: ' + data.username + '</p>';
+      if (data.location && data.location != 'None')
+        str += '<p>所在地: ' + data.location + '</p>';
+      if (data.tagline && data.tagline != 'None')
+        str += '<p>签名: ' + data.tagline + '</p>';
+      if (data.website && data.website != 'None')
+        str += '<p>个人网站: <a href="' + utils.checkUrl(data.website) + '">'
+          + data.website + '</a>';
+      return str;
     }
   };
-  return utils;
 })();
 // }}}
 
 // {{{ 微博图床
-// [微博是个好图床](http://weibotuchuang.sinaapp.com/)
+// Reference: [微博是个好图床](http://weibotuchuang.sinaapp.com/)
+
 var weibotuchuang = (function () {
   var upLoadFlag = true;
 
@@ -192,6 +222,7 @@ var weibotuchuang = (function () {
 
 // {{{ topic
 
+// {{{ Topicstruct and TopicExt
 var FOCUS_ON = '只看'
   , UNDO = '还原';
 
@@ -204,15 +235,14 @@ function TopicStruct() {
   this.replies = [];
   this.repliesByUsername = {};
   this.repliesByReplyId = {};
+  this.repliesByNo = {};
 }
 
 function TopicExt() {
   this._topicStruct = new TopicStruct();
-
-  this.fixReplyId = null;
-
   this.init();
 }
+// }}}
 
 // {{{ 初始化
 TopicExt.prototype.init = function () {
@@ -224,7 +254,7 @@ TopicExt.prototype.init = function () {
   st.repliesBox = $boxes[1];
   st.newReplyBox = $boxes[2];
 
-  var $topicHeader = $('div.header', st.topicBox);
+  var $topicHeader = $(st.topicBox).find('div.header');
   st.topic.title = $topicHeader.find('h1').text();
   st.topic.by = $topicHeader.find('small>a').text();
 
@@ -244,6 +274,11 @@ TopicExt.prototype.init = function () {
     }
     st.repliesByUsername[reply.username].push(reply);
     st.repliesByReplyId[reply.replyId] = reply;
+    st.repliesByNo[reply.no] = reply;
+  }).on('click', 'a.ext_foldSign', function () {
+    var $fold = $(this)
+      , reply = $fold.closest('table').parent().data('reply');
+    foldSignClicked($fold, reply.replyId, reply.username, st)
   });
 
   if (st.newReplyBox) {
@@ -317,7 +352,6 @@ TopicExt.prototype.addWBSGHTCButton = function () {
 };
 // }}}
 
-
 // {{{ 解析每条回复
 TopicExt.prototype.decomposeReply = function ($r) {
   var reply = {}
@@ -325,22 +359,21 @@ TopicExt.prototype.decomposeReply = function ($r) {
   reply.$row = $r;
   reply.hidden = $r.hasClass('collapsed');
   reply.replyId = $r.attr('id');
-  reply.no = parseInt($r.find('tr>td>div.fr>span.no').text());
-  reply.replyTime = $r.find('tr>td:last>span').text();
+  reply.no = parseFloat($r.find('span.no').text());
+  //reply.replyTime = $r.find('tr>td:last>span').text();
 
   var $usernameTag = $r.find('tr>td:last>strong>a');
   reply.username = $usernameTag.text();
-
-  reply.$foldSign = this.createFoldSign();
+  reply.$foldSign = $('<a href="javascript:void(0);" class="ext_foldSign dark">' + FOCUS_ON + '</a>');
   $usernameTag.closest('strong').before(reply.$foldSign, '&nbsp;&nbsp;');
 
-  reply.$avatar = $r.find('tr>td:first>img.avatar');
+  reply.$avatar = $r.find('img.avatar');
+  reply.$avatar.data('username', reply.username);
   if (reply.username == st.topic.by) {
-    reply.$avatar.css('-webkit-box-shadow', '0 0 10px 5px #06c');
-    reply.$avatar.css('box-shadow', '0 0 10px 5px #06c');
+    reply.$avatar.addClass('ext_owner');
   }
 
-  reply.$content = $r.find('tr>td:last>div.reply_content');
+  reply.$content = $r.find('div.reply_content');
   this.decomposeReplyContent(reply);
 
   $r.data('reply', reply);
@@ -349,7 +382,7 @@ TopicExt.prototype.decomposeReply = function ($r) {
 };
 // }}}
 
-// {{{
+// {{{ 解析回复内容
 TopicExt.prototype.decomposeReplyContent = function (currentReply) {
   var self = this
     , st = this._topicStruct;
@@ -358,7 +391,7 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
     return /\/member\/(\w+)/i.test($a.attr('href'));
   }
 
-  currentReply.$content.find('a').click(function () {
+  currentReply.$content.on('click', 'a', function () {
     var $a = $(this),
         username, $doc, t, index;
     if (isAtLink($a)) {
@@ -368,7 +401,7 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
       index = st.replies.indexOf(currentReply);
 
       currentReply.$foldSign.text(UNDO);
-      async.eachSeries(st.replies.slice(0, index).reverse(), function (reply, complete) {
+      eachSeries(st.replies.slice(0, index).reverse(), function (reply, complete) {
         if (reply.username == username || reply.username == currentReply.username) {
           reply.$foldSign.text(UNDO);
           reply.$row.show({
@@ -392,7 +425,7 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
         }
       }, function (err) {});
 
-      async.each(st.replies.slice(index + 1), function (reply, complete) {
+      each(st.replies.slice(index + 1), function (reply, complete) {
         if (reply.username == username || reply.username == currentReply.username) {
           reply.$foldSign.text(UNDO);
           reply.$row.show();
@@ -404,7 +437,8 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
 
       return false;
     }
-  }).on({
+  });
+  currentReply.$content.find('a').on({
     powerTipPreRender: function () {
       var $a = $(this),
           username, replies, $content;
@@ -420,22 +454,17 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
             }
           }
 
-          if ($content) {
+          if ($content)
             $(this).data('powertip', $content.clone().contents());
-          }
-
         }
       }
     }
-
   }).hover(function () {
-    if (isAtLink($(this))) {
+    if (isAtLink($(this)))
       $.powerTip.show(this);
-    }
   }, function () {
-    if (isAtLink($(this))) {
+    if (isAtLink($(this)))
       $.powerTip.hide(this, true);
-    }
   }).powerTip({
     placement: 'ne',
     smartPlacement: true,
@@ -446,26 +475,15 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
 };
 //}}}
 
-
-TopicExt.prototype.createFoldSign = function () {
-  var st = this._topicStruct;
-  var $fold = $('<a href="javascript:void(0)">' + FOCUS_ON + '</a>');
-  $fold.click(function () {
-    var reply = $fold.closest('div.cell').data('reply');
-    foldSignClicked($fold, reply.replyId, reply.username, st)
-  });
-  return $fold;
-};
-
-
 // {{{ 折叠和展开
+
 function foldSignClicked($a, replyId, username, st) {
   var $doc = $(document),
       currentReply = st.repliesByReplyId[replyId],
       t = currentReply.$row.offset().top - $doc.scrollTop(),
       index = st.replies.indexOf(currentReply);
 
-  function doEachSeries(method, replies, text) {
+  function foldSignDoEachSeries(method, replies, text) {
     eachSeries(replies, function (reply, complete) {
       if (reply.username == username) {
         reply.$foldSign.text(text);
@@ -474,8 +492,7 @@ function foldSignClicked($a, replyId, username, st) {
         reply.$row[method]({
           duration: 0,
           step: function () {
-            var top = currentReply.$row.offset().top - t;
-            $doc.scrollTop(top);
+            $doc.scrollTop(currentReply.$row.offset().top - t);
           },
           complete: complete
         });
@@ -483,11 +500,11 @@ function foldSignClicked($a, replyId, username, st) {
     }, function (err) {});
   }
 
-  function doEach(method, replies, text) {
+  function foldSignDoEach(method, replies, text) {
     each(replies, function (reply, complete) {
       setTimeout(function () {
         if (reply.username == username) {
-          reply.$foldSign.text(UNDO);
+          reply.$foldSign.text(text);
         } else {
           reply.$row[method]();
         }
@@ -498,15 +515,13 @@ function foldSignClicked($a, replyId, username, st) {
 
   if ($a.text() == FOCUS_ON) { // 折叠
     $a.text(UNDO);
-    doEachSeries('hide', st.replies.slice(0, index).reverse(), UNDO);
-    doEach('hide', st.replies.slice(index + 1), UNDO);
-  } else { // 展开
+    foldSignDoEachSeries('hide', st.replies.slice(0, index).reverse(), UNDO);
+    foldSignDoEach('hide', st.replies.slice(index + 1), UNDO);
+  } else { // 还原
     $a.text(FOCUS_ON);
-    doEachSeries('show', st.replies.slice(0, index).reverse(), FOCUS_ON);
-    doEach('show', st.replies.slice(index + 1), FOCUS_ON);
+    foldSignDoEachSeries('show', st.replies.slice(0, index).reverse(), FOCUS_ON);
+    foldSignDoEach('show', st.replies.slice(index + 1), FOCUS_ON);
   }
-
-  return false;
 };
 // }}}
 
@@ -517,4 +532,64 @@ $(function () {
     new TopicExt();
   } else if (/v2ex.com\/new\/.*/i.test(window.location.href)) {
   }
+
+  // {{{ 鼠标移到头像上时，显示信息
+  $('img.avatar').on({
+    powerTipPreRender: function () {
+      var $avatar = $(this),
+          matches, src;
+
+      function getUserCallback(err, data) {
+        if (err) return;
+
+        var html = utils.formatTemplate(data);
+
+        // 手动显示
+        $avatar.powerTip({
+          mouseOnToPopup: true,
+          placement: 'w',
+          smartPlacement: true,
+          manual: true
+        });
+
+        $avatar.data('powertip', html);
+        $.powerTip.show($avatar);
+
+        // 自动显示
+        $avatar.powerTip({
+          mouseOnToPopup: true,
+          placement: 'w',
+          smartPlacement: true,
+          manual: false
+        });
+      }
+
+      if (!$avatar.data('powertip')) {
+        src = $avatar.attr('src');
+
+        matches = src.match(/\/(\d+)_[a-z]+.png/i); // 匹配用户 id
+        if (matches) {
+          utils.getUserById(matches[1], getUserCallback);
+        } else if ($avatar.data('username')) {
+          utils.getUserByUsername($avatar.data('username'), getUserCallback);
+        } else {
+          var $memberLink = $avatar.closest('a');
+          if ($memberLink.length > 0) {
+            src = $memberLink.attr('href');
+            matches = src.match(/\/member\/(\w+)$/i); // 匹配用户名
+            if (matches) {
+              utils.getUserByUsername(matches[1], getUserCallback);
+            }
+          }
+        }
+
+      }
+    }
+  }).powerTip({
+    mouseOnToPopup: true,
+    placement: 'w',
+    smartPlacement: true
+  });
+  // }}}
+
 });
