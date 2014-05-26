@@ -48,8 +48,8 @@ function eachSeries(arr, iterator, callback) {
 
 // {{{ utils
 var utils = (function () {
-  var user_info_by_username = {},
-      user_info_by_id = {};
+  var user_info_by_username = {}
+    , user_info_by_id = {};
 
   return {
     getUserByUsername: function (username, callback) {
@@ -263,8 +263,8 @@ TopicExt.prototype.init = function () {
   $(st.repliesBox).find('>div').each(function (i, row) {
     if (i == 0) return; // 第一行是回复数和最后回复时间
 
-    var $row = $(row),
-        reply = self.decomposeReply($row);
+    var $row = $(row)
+      , reply = self.decomposeReply($row);
 
     if (!reply.username) return; // 最后一条是翻页
 
@@ -289,16 +289,15 @@ TopicExt.prototype.init = function () {
 
 // {{{ 添加 “只看楼主” 和 “显示全部” 按钮
 TopicExt.prototype.addMoreTopicButton = function () {
-  var self = this
-    , st = this._topicStruct
-    , $topicButtons = $('div.topic_buttons', st.topicBox),
-      $watchOwnerButton = $('<a href="#" class="tb">只看楼主</a>'),
-      $showAllButton = $('<a href="#" class="tb">显示全部</a>');
+  var st = this._topicStruct
+    , $topicButtons = $('div.topic_buttons', st.topicBox)
+    , $watchOwnerButton = $('<a href="#" class="tb">只看楼主</a>')
+    , $showAllButton = $('<a href="#" class="tb">显示全部</a>');
 
   $watchOwnerButton.click(function () {
     $.each(st.replies, function (i, reply) {
       reply.$row.show();
-      if (reply.username == self.topic.by) {
+      if (reply.username == st.topic.by) {
         reply.$foldSign.text(UNDO);
       } else {
         reply.$row.hide();
@@ -392,8 +391,8 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
   }
 
   currentReply.$content.on('click', 'a', function () {
-    var $a = $(this),
-        username, $doc, t, index;
+    var $a = $(this)
+      , username, $doc, t, index;
     if (isAtLink($a)) {
       username = $a.text();
       $doc = $(document);
@@ -440,8 +439,8 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
   });
   currentReply.$content.find('a').on({
     powerTipPreRender: function () {
-      var $a = $(this),
-          username, replies, $content;
+      var $a = $(this)
+        , username, replies, $content;
       if (isAtLink($a)) {
         username = $a.text();
         if (username in st.repliesByUsername) {
@@ -478,10 +477,10 @@ TopicExt.prototype.decomposeReplyContent = function (currentReply) {
 // {{{ 折叠和展开
 
 function foldSignClicked($a, replyId, username, st) {
-  var $doc = $(document),
-      currentReply = st.repliesByReplyId[replyId],
-      t = currentReply.$row.offset().top - $doc.scrollTop(),
-      index = st.replies.indexOf(currentReply);
+  var $doc = $(document)
+    , currentReply = st.repliesByReplyId[replyId]
+    , t = currentReply.$row.offset().top - $doc.scrollTop()
+    , index = st.replies.indexOf(currentReply);
 
   function foldSignDoEachSeries(method, replies, text) {
     eachSeries(replies, function (reply, complete) {
@@ -536,8 +535,8 @@ $(function () {
   // {{{ 鼠标移到头像上时，显示信息
   $('img.avatar').on({
     powerTipPreRender: function () {
-      var $avatar = $(this),
-          matches, src;
+      var $avatar = $(this)
+        , matches, src;
 
       function getUserCallback(err, data) {
         if (err) return;
