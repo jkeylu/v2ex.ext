@@ -13,6 +13,9 @@
   },
 
   "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "*://*.weibo.com/",
     "*://*.v2ex.com/",
     "*://v2ex.com/"
   ],

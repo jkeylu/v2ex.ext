@@ -17,7 +17,10 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>Chrome</key>
-	<dict/>
+	<dict>
+		<key>Global Page</key>
+		<string>global.safari.html</string>
+	</dict>
 	<key>Content</key>
 	<dict>
 		<key>Scripts</key>
@@ -45,6 +48,7 @@
 			<array>
 				<string>v2ex.com</string>
 				<string>*.v2ex.com</string>
+				<string>*.weibo.com</string>
 			</array>
 			<key>Include Secure Pages</key>
 			<true/>

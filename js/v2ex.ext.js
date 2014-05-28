@@ -128,21 +128,61 @@ var utils = (function () {
 var weibotuchuang = (function () {
   var upLoadFlag = true;
 
-  function complete (src) {
-    if (src) {
-      upLoadFlag = true;
-      dragT.innerHTML = t1;
-      rs.style.display = 'block';
-      rsI.src = rsT.value = src;
-      setTimeout(function(){
-        window.focus();
-        rsT.focus();
-        rsT.select();
-      }, 1000);
-    } else {
-      alert('上传遇到一些问题，可能是您的新浪微博帐号已经登出了。请访问http://weibo.com/登录之后再过来，谢谢。');
+  function requestDone(resText, completed) {
+    if (!resText) {
+      completed('上传失败。');
+      return;
     }
+    var splitIndex, rs, pid;
+    try {
+      splitIndex = resText.indexOf('{"');
+      rs = JSON.parse(resText.substring(splitIndex));
+      pid = rs.data.pics.pic_1.pid;
+    } catch (e) {
+      completed('上传失败，请登录微博后再试试。');
+      return;
+    }
+    completed(null, pid2url(pid, 'large'));
   }
+
+  var postData = (function () {
+    var isSafari = false
+      , done;
+    try {
+      isSafari = !!(safari && safari.self && safari.self.tab);
+    } catch (err) {}
+    if (isSafari) {
+      safari.self.addEventListener('message', function (e) {
+        if (e.name === 'v2ex-post-data-to-weibo-done') {
+          requestDone(e.message, done);
+        }
+      }, false);
+    }
+
+    if (!isSafari) {
+      return function (base64, completed) {
+        var xhr = new XMLHttpRequest()
+          , data = new FormData();
+
+        data.append('b64_data', base64);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200 )
+              requestDone(xhr.responseText, completed);
+            else
+              completed('图片上传失败');
+          }
+        };
+        xhr.open('POST', 'http://picupload.service.weibo.com/interface/pic_upload.php?&mime=image%2Fjpeg&data=base64&url=0&markpos=1&logo=&nick=0&marks=1&app=miniblog');
+        xhr.send(data);
+      };
+    } else {
+      return function (base64, completed) {
+        done = completed;
+        safari.self.tab.dispatchMessage('v2ex-post-data-to-weibo', base64);
+      };
+    }
+  })();
 
   function upload (file, completed) {
     if (upLoadFlag === false) {
@@ -162,21 +202,11 @@ var weibotuchuang = (function () {
 
     var reader = new FileReader();
     reader.onloadend = function(e) {		
-      var xhr = new XMLHttpRequest()
-        , base64 = e.target.result.split(',')[1]
-        , data = new FormData();
-
-      data.append("b64_data", base64);
-      xhr.onreadystatechange = function(){
-        if (xhr.readyState === 4 && xhr.status === 200 ){
-          var splitIndex = xhr.responseText.indexOf('{"')
-            , rs = JSON.parse(xhr.responseText.substring(splitIndex))
-            , pid = rs.data.pics.pic_1.pid;
-          completed(null, pid2url(pid, 'large'));
-        }
-      };
-      xhr.open('POST', 'http://picupload.service.weibo.com/interface/pic_upload.php?&mime=image%2Fjpeg&data=base64&url=0&markpos=1&logo=&nick=0&marks=1&app=miniblog');
-      xhr.send(data);
+      var base64 = e.target.result.split(',')[1];
+      postData(base64, function () {
+        upLoadFlag = true;
+        completed.apply(null, arguments);
+      });
     };
     try {
       reader.readAsDataURL(file);
@@ -282,7 +312,7 @@ TopicExt.prototype.init = function () {
   });
 
   if (st.newReplyBox) {
-    self.addWBSGHTCButton();
+    this.addWBSGHTCButton();
   }
 };
 // }}}
@@ -332,10 +362,13 @@ TopicExt.prototype.addWBSGHTCButton = function () {
     file = oe.dataTransfer.files && oe.dataTransfer.files[0];
     weibotuchuang.upload(file, function (err, src) {
       if (err) {
+        alert(err);
         console.log(err);
         return;
       }
-      replyContent.val(replyContent.val() + ' ' + src);
+      var c = replyContent.val();
+      c += c ? ('\n' + src) : src;
+      replyContent.val(c);
     });
   }
 
