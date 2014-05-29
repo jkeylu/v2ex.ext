@@ -358,7 +358,7 @@ TopicExt.prototype.decomposeReply = function ($r) {
   var $usernameTag = $r.find('tr>td:last>strong>a');
   reply.username = $usernameTag.text();
   reply.$foldSign = $('<a href="javascript:void(0);" class="ext_foldSign dark">' + FOCUS_ON + '</a>');
-  $usernameTag.closest('strong').before(reply.$foldSign, '&nbsp;&nbsp;');
+  $usernameTag.closest('strong').next('span').after('&nbsp;&nbsp;', reply.$foldSign);
 
   reply.$avatar = $r.find('img.avatar');
   reply.$avatar.data('username', reply.username);
