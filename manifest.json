@@ -5,6 +5,7 @@
 
   "description": "V2EX Extension",
   "homepage_url": "https://github.com/jkeylu/v2ex.ext",
+  "author": "jKey Lu",
 
   "icons": {
     "16": "v2ex.ico",

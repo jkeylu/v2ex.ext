@@ -310,10 +310,6 @@ TopicExt.prototype.init = function () {
       , reply = $fold.closest('table').parent().data('reply');
     foldSignClicked($fold, reply.replyId, reply.username, st)
   });
-
-  if (st.newReplyBox) {
-    this.addWBSGHTCButton();
-  }
 };
 // }}}
 
@@ -346,41 +342,6 @@ TopicExt.prototype.addMoreTopicButton = function () {
 
   $topicButtons.append($watchOwnerButton);
   $topicButtons.append($showAllButton);
-};
-// }}}
-
-// {{{ 添加 “微博是个好图床” 按钮
-TopicExt.prototype.addWBSGHTCButton = function () {
-  var self = this
-    , replyContent = $('#reply_content');
-
-  function ondrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    var oe = e.originalEvent;
-    file = oe.dataTransfer.files && oe.dataTransfer.files[0];
-    weibotuchuang.upload(file, function (err, src) {
-      if (err) {
-        alert(err);
-        console.log(err);
-        return;
-      }
-      var c = replyContent.val();
-      c += c ? ('\n' + src) : src;
-      replyContent.val(c);
-    });
-  }
-
-  function stop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  replyContent.on('dragover', stop);
-  replyContent.on('dragenter', stop);
-  replyContent.on('dragleave', stop);
-  replyContent.on('drop', ondrop)
 };
 // }}}
 
@@ -560,10 +521,47 @@ function foldSignClicked($a, replyId, username, st) {
 // }}}
 
 $(function () {
+  if (!/v2ex.com/i.test(window.location.href))
+    return;
+
   if (/v2ex.com\/t\/.*/i.test(window.location.href)) {
     new TopicExt();
   } else if (/v2ex.com\/new\/.*/i.test(window.location.href)) {
   }
+
+  // {{{ 添加 “微博是个好图床”
+  $('textarea').each(function (i, ele) {
+    var replyContent = $(this);
+
+    function ondrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var oe = e.originalEvent;
+      file = oe.dataTransfer.files && oe.dataTransfer.files[0];
+      weibotuchuang.upload(file, function (err, src) {
+        if (err) {
+          alert(err);
+          console.log(err);
+          return;
+        }
+        var c = replyContent.val();
+        c += c ? ('\n' + src) : src;
+        replyContent.val(c);
+      });
+    }
+
+    function stop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    replyContent.on('dragover', stop);
+    replyContent.on('dragenter', stop);
+    replyContent.on('dragleave', stop);
+    replyContent.on('drop', ondrop)
+  });
+// }}}
 
   // {{{ 鼠标移到头像上时，显示信息
   $('img.avatar').on({

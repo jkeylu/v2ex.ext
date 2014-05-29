@@ -38,6 +38,8 @@
 			<string>css/v2ex.ext.css</string>
 		</array>
 	</dict>
+	<key>Description</key>
+	<string>V2EX Extension</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>
@@ -56,6 +58,8 @@
 			<string>Some</string>
 		</dict>
 	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://jkeylu.github.io/v2ex.ext/update.plist</string>
 	<key>Website</key>
 	<string>https://github.com/jkeylu/v2ex.ext</string>
 </dict>
