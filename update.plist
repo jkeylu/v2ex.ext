@@ -10,11 +10,11 @@
         <key>Developer Identifier</key>
         <string>9PR4465GAS9</string>
         <key>CFBundleVersion</key>
-        <string>0.2.0</string>
+        <string>2</string>
         <key>CFBundleShortVersionString</key>
-        <string>0.2.0</string>
+        <string>0.2.1</string>
         <key>URL</key>
-        <string>http://jkeylu.github.io/v2ex.ext/v2ex.ext_0.2.0.safariextz</string>
+        <string>http://jkeylu.github.io/v2ex.ext/v2ex_ext_0_2_1.safariextz</string>
       </dict>
     </array>
   </dict>
