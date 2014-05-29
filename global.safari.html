@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<script>
+  safari.application.addEventListener('message', postData, false);
+
+  function postData(event) {
+    if (event.name === 'v2ex-post-data-to-weibo') {
+      var xhr = new XMLHttpRequest()
+        , data = new FormData();
+
+      data.append('b64_data', event.message);
+      xhr.onreadystatechange = function(){
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200 )
+            event.target.page.dispatchMessage('v2ex-post-data-to-weibo-done', xhr.responseText);
+          else
+            event.target.page.dispatchMessage('v2ex-post-data-to-weibo-done', null);
+        }
+      };
+      xhr.open('POST', 'http://picupload.service.weibo.com/interface/pic_upload.php?&mime=image%2Fjpeg&data=base64&url=0&markpos=1&logo=&nick=0&marks=1&app=miniblog');
+      xhr.send(data);
+    }
+  }
+</script>

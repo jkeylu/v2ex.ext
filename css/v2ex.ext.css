@@ -1,0 +1,28 @@
+.inner a.ext_foldSign, .cell a.ext_foldSign {
+  visibility: hidden;
+}
+.inner:hover a.ext_foldSign, .cell:hover a.ext_foldSign {
+  visibility: visible;
+}
+.ext_owner {
+  -webkit-box-shadow: 0 0 10px 5px #06c;
+  box-shadow: 0 0 10px 5px #06c;
+}
+#powerTip {
+	max-width: 670px;
+	font-size: 12px;
+	line-height: 140%;
+}
+
+#powerTip a {
+	color: #fff;
+}
+
+#powerTip a:hover {
+	color: #fff;
+}
+
+#powerTip p {
+	line-height: 100%;
+	white-space: nowrap;
+}
