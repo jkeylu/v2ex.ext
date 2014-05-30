@@ -12,6 +12,7 @@
 	max-width: 670px;
 	font-size: 12px;
 	line-height: 140%;
+	white-space: pre-wrap;
 }
 
 #powerTip a {
