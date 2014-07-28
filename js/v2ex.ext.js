@@ -533,18 +533,18 @@ $(function () {
   $('textarea').each(function (i, ele) {
     var replyContent = $(this);
 
-      function weibotuchuangUpload(file) {
-          weibotuchuang.upload(file, function (err, src) {
-              if (err) {
-                  alert(err);
-                  console.log(err);
-                  return;
-              }
-              var c = replyContent.val();
-              c += c ? ('\n' + src) : src;
-              replyContent.val(c);
-          });
-      }
+    function weibotuchuangUpload(file) {
+      weibotuchuang.upload(file, function (err, src) {
+        if (err) {
+          alert(err);
+          console.log(err);
+          return;
+        }
+        var c = replyContent.val();
+        c += c ? ('\n' + src) : src;
+        replyContent.val(c);
+      });
+    }
 
     function ondrop(e) {
       e.preventDefault();
@@ -560,17 +560,17 @@ $(function () {
       e.stopPropagation();
     }
 
-      function handlePaste(e) {
-
-          var oe = e.originalEvent;
-          var clipboardData, items, item;//for chrome
-          if (oe && (clipboardData = oe.clipboardData)
-              && (items = clipboardData.items)
-              && (item = items[0]) &&
-              item.kind == 'file' && item.type.match(/^image\//i)) {
-              weibotuchuangUpload(item.getAsFile());
-          }
+    function handlePaste(e) {
+      var oe = e.originalEvent;
+      var clipboardData, items, item; //for chrome
+      if (oe && (clipboardData = oe.clipboardData)
+          && (items = clipboardData.items)
+          && (item = items[0])
+          && item.kind == 'file'
+          && item.type.match(/^image\//i)) {
+        weibotuchuangUpload(item.getAsFile());
       }
+    }
 
     replyContent.on('dragover', stop);
     replyContent.on('dragenter', stop);
