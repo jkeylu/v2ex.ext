@@ -532,8 +532,8 @@ $(function () {
   // {{{ 添加 “微博是个好图床”
   $('textarea').each(function (i, ele) {
     var replyContent = $(this);
-      
-      function weibotuchuangUpload(file){
+
+      function weibotuchuangUpload(file) {
           weibotuchuang.upload(file, function (err, src) {
               if (err) {
                   alert(err);
@@ -559,17 +559,15 @@ $(function () {
       e.preventDefault();
       e.stopPropagation();
     }
-      
-      function handlePaste(e){
-          e.preventDefault();
-          e.stopPropagation();
-          
+
+      function handlePaste(e) {
+
           var oe = e.originalEvent;
-          var clipboardData,items,item;//for chrome
-          if(oe&&(clipboardData = oe.clipboardData)
-              &&(items=clipboardData.items)
-              &&(item=items[0])&&
-              item.kind=='file'&&item.type.match(/^image\//i)){
+          var clipboardData, items, item;//for chrome
+          if (oe && (clipboardData = oe.clipboardData)
+              && (items = clipboardData.items)
+              && (item = items[0]) &&
+              item.kind == 'file' && item.type.match(/^image\//i)) {
               weibotuchuangUpload(item.getAsFile());
           }
       }
