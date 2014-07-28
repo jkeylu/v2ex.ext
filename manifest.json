@@ -1,6 +1,6 @@
 {
   "name": "v2ex.ext",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "manifest_version": 2,
 
   "description": "V2EX Extension",
