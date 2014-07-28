@@ -552,7 +552,7 @@ $(function () {
 
       var oe = e.originalEvent;
       file = oe.dataTransfer.files && oe.dataTransfer.files[0];
-        weibotuchuangUpload(file);
+      weibotuchuangUpload(file);
     }
 
     function stop(e) {
@@ -564,11 +564,18 @@ $(function () {
       var oe = e.originalEvent;
       var clipboardData, items, item; //for chrome
       if (oe && (clipboardData = oe.clipboardData)
-          && (items = clipboardData.items)
-          && (item = items[0])
-          && item.kind == 'file'
-          && item.type.match(/^image\//i)) {
-        weibotuchuangUpload(item.getAsFile());
+          && (items = clipboardData.items)) {
+        if((item = items[0])
+            && item.kind == 'file'
+            && item.type.match(/^image\//i)) {
+          weibotuchuangUpload(item.getAsFile());
+        } else if (items.length > 1
+            && (item = items[1])
+            && item.kind == 'file'
+            && item.type.match(/^image\//i)) {
+          // mac 上的 chrome
+          weibotuchuangUpload(item.getAsFile());
+        }
       }
     }
 
