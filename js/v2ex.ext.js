@@ -565,17 +565,16 @@ $(function () {
       var clipboardData, items, item; //for chrome
       if (oe && (clipboardData = oe.clipboardData)
           && (items = clipboardData.items)) {
-        if((item = items[0])
-            && item.kind == 'file'
-            && item.type.match(/^image\//i)) {
-          weibotuchuangUpload(item.getAsFile());
-        } else if (items.length > 1
-            && (item = items[1])
-            && item.kind == 'file'
-            && item.type.match(/^image\//i)) {
-          // mac 上的 chrome
-          weibotuchuangUpload(item.getAsFile());
+        var b = false;
+        for (var i = 0, l = items.length; i < l; i++) {
+          if((item = items[i])
+             && item.kind == 'file'
+             && item.type.match(/^image\//i)) {
+            b = true;
+            weibotuchuangUpload(item.getAsFile());
+          }
         }
+        if (b) return false;
       }
     }
 
