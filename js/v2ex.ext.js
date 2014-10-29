@@ -93,7 +93,7 @@ var utils = (function () {
     formatDate: function (timestamp) {
       try {
         var t = new Date(timestamp * 1000);
-        return t.getFullYear() + '-' + t.getMonth() + '-' + t.getDate()
+        return t.getFullYear() + '-' + t.getMonth() + 1 + '-' + t.getDate()
           + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
       } catch (e) {
         return '';
