@@ -504,9 +504,8 @@ function foldSignClicked($a, replyId, username, st) {
   function foldSignDoEach(method, replies, text) {
     each(replies, function (reply, complete) {
       setTimeout(function () {
-        if (reply.username == username) {
-          reply.$foldSign.text(text);
-        } else {
+        reply.$foldSign.text(text);
+        if (reply.username != username) {
           reply.$row[method]();
         }
       }, 0);
