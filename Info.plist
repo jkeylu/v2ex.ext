@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>jKey Lu</string>
 	<key>Builder Version</key>
-	<string>9537.76.4</string>
+	<string>10600.1.25</string>
 	<key>CFBundleDisplayName</key>
 	<string>v2ex.ext</string>
 	<key>CFBundleIdentifier</key>
@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.2.2</string>
+	<string>0.2.4</string>
 	<key>CFBundleVersion</key>
-	<string>0.2.2</string>
+	<string>5</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Global Page</key>
@@ -40,6 +40,8 @@
 	</dict>
 	<key>Description</key>
 	<string>V2EX Extension</string>
+	<key>DeveloperIdentifier</key>
+	<string>9PR465GAS9</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>

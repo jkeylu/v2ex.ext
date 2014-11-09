@@ -93,7 +93,7 @@ var utils = (function () {
     formatDate: function (timestamp) {
       try {
         var t = new Date(timestamp * 1000);
-        return t.getFullYear() + '-' + t.getMonth() + 1 + '-' + t.getDate()
+        return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()
           + ' ' + t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds();
       } catch (e) {
         return '';
@@ -309,6 +309,10 @@ TopicExt.prototype.init = function () {
     var $fold = $(this)
       , reply = $fold.closest('table').parent().data('reply');
     foldSignClicked($fold, reply.replyId, reply.username, st)
+  }).on('click', 'a.at_me', function () {
+    var reply = $(this).closest('table').parent().data('reply');
+    whoAtMe(reply.replyId, reply.username, st);
+    return false;
   });
 };
 // }}}
@@ -356,9 +360,10 @@ TopicExt.prototype.decomposeReply = function ($r) {
   //reply.replyTime = $r.find('tr>td:last>span').text();
 
   var $usernameTag = $r.find('tr>td:last>strong>a');
+  $usernameTag.addClass('at_me');
   reply.username = $usernameTag.text();
   reply.$foldSign = $('<a href="javascript:void(0);" class="ext_foldSign dark">' + FOCUS_ON + '</a>');
-  $usernameTag.closest('strong').next('span').after('&nbsp;&nbsp;', reply.$foldSign);
+  $usernameTag.closest('strong').nextAll('span').last().after('&nbsp;&nbsp;', reply.$foldSign);
 
   reply.$avatar = $r.find('img.avatar');
   reply.$avatar.data('username', reply.username);
@@ -367,6 +372,9 @@ TopicExt.prototype.decomposeReply = function ($r) {
   }
 
   reply.$content = $r.find('div.reply_content');
+  reply.ats = reply.$content.find('a[href^="/member/"]').map(function () {
+    return $(this).text();
+  }).get();
   this.decomposeReplyContent(reply);
 
   $r.data('reply', reply);
@@ -478,8 +486,8 @@ function foldSignClicked($a, replyId, username, st) {
 
   function foldSignDoEachSeries(method, replies, text) {
     eachSeries(replies, function (reply, complete) {
+      reply.$foldSign.text(text);
       if (reply.username == username) {
-        reply.$foldSign.text(text);
         complete();
       } else {
         reply.$row[method]({
@@ -516,6 +524,49 @@ function foldSignClicked($a, replyId, username, st) {
     foldSignDoEach('show', st.replies.slice(index + 1), FOCUS_ON);
   }
 };
+
+function whoAtMe(replyId, username, st) {
+  var $doc = $(document)
+    , currentReply = st.repliesByReplyId[replyId]
+    , t = currentReply.$row.offset().top - $doc.scrollTop()
+    , index = st.replies.indexOf(currentReply);
+
+  currentReply.$foldSign.text(UNDO);
+  eachSeries(st.replies.slice(0, index).reverse(), function (reply, complete) {
+    if (reply.ats.indexOf(username) >= 0 || reply.username == username) {
+      reply.$foldSign.text(UNDO);
+      reply.$row.show({
+        duration: 0,
+        step: function () {
+          var top = currentReply.$row.offset().top - t;
+          $doc.scrollTop(top);
+        },
+        complete: complete
+      });
+      complete();
+    } else {
+      reply.$row.hide({
+        duration: 0,
+        step: function () {
+          var top = currentReply.$row.offset().top - t;
+          $doc.scrollTop(top);
+        },
+        complete: complete
+      });
+    }
+  }, function (err) {});
+
+  each(st.replies.slice(index + 1), function (reply, complete) {
+    if (reply.ats.indexOf(username) >= 0 || reply.username == username) {
+      reply.$foldSign.text(UNDO);
+      reply.$row.show();
+    } else {
+      reply.$row.hide();
+    }
+    complete();
+  }, function (err) {});
+
+}
 // }}}
 
 // }}}
