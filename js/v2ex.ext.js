@@ -313,6 +313,23 @@ TopicExt.prototype.init = function () {
     var reply = $(this).closest('table').parent().data('reply');
     whoAtMe(reply.replyId, reply.username, st);
     return false;
+  }).on('mouseenter', function () {
+    var cell = $(this);
+    var reply = cell.data('reply');
+    if (reply.hasPeopleAtMe == undefined) {
+      reply.hasPeopleAtMe = false;
+      for (var i = 0, len = st.replies.length; i < len; i++) {
+        if (st.replies[i].ats.indexOf(reply.username) >= 0) {
+          reply.hasPeopleAtMe = true;
+          break;
+        }
+      }
+    }
+    if (reply.hasPeopleAtMe === true) {
+      cell.find('a.at_me').show();
+    }
+  }).on('mouseleave', function () {
+    $(this).find('a.at_me').hide();
   });
 };
 // }}}
@@ -360,7 +377,6 @@ TopicExt.prototype.decomposeReply = function ($r) {
   //reply.replyTime = $r.find('tr>td:last>span').text();
 
   var $usernameTag = $r.find('tr>td:last>strong>a');
-  $usernameTag.addClass('at_me');
   reply.username = $usernameTag.text();
   reply.$foldSign = $('<a href="javascript:void(0);" class="ext_foldSign dark">' + FOCUS_ON + '</a>');
   $usernameTag.closest('strong').nextAll('span').last().after('&nbsp;&nbsp;', reply.$foldSign);
@@ -375,6 +391,7 @@ TopicExt.prototype.decomposeReply = function ($r) {
   reply.ats = reply.$content.find('a[href^="/member/"]').map(function () {
     return $(this).text();
   }).get();
+  reply.$foldSign.after('&nbsp;&nbsp;<a href="javascript:void(0);" class="at_me dark" style="display: none;">@我</a>');
   this.decomposeReplyContent(reply);
 
   $r.data('reply', reply);
