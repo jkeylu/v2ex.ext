@@ -1,6 +1,6 @@
 {
   "name": "v2ex.ext",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "manifest_version": 2,
 
   "description": "V2EX Extension",
@@ -16,10 +16,16 @@
   "permissions": [
     "webRequest",
     "webRequestBlocking",
+    "notifications",
+    "storage",
     "*://*.weibo.com/",
     "*://*.v2ex.com/",
     "*://v2ex.com/"
   ],
+
+  "options_page": "option/options.html",
+
+  "background": { "scripts": ["background.js"] },
 
   "content_scripts": [
     {
@@ -34,7 +40,9 @@
       "js": [
         "js/jquery-2.1.1.min.js",
         "js/jquery.powertip.min.js",
-        "js/v2ex.ext.js"
+        "js/v2ex.ext.js",
+        "js/cookie.js",
+        "js/notification.js"
       ],
       "run_at": "document_start"
     }
