@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<title>V2EX</title>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<link href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<style>
+::selection {
+	background: #4ae9b8;
+	color:#000;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar {
+	width: 3px;
+	height: 3px;
+}
+::-webkit-scrollbar-thumb,.pre-scrollable::-webkit-scrollbar-thumb{ 
+		background-color:#CDC9C9;
+		border-radius: 3px;
+		outline:transparent; 
+	}
+::-webkit-scrollbar-track-piece {
+	background-color: #f4f4f4;
+	border-radius: 0 0 8px 8px;
+}
+::-webkit-scrollbar-thumb:hover{ 
+	background-color:#555; 
+}
+*{
+	margin: 0;
+	padding: 0;
+}
+a{
+	color:#8F8F8F;
+}
+a:hover {
+	text-decoration: none;
+	-webkit-transition: 0.2s;
+    -moz-transition: 0.2s;
+    transition: 0.2s;
+}
+html,body{
+	min-height: 500px;
+	height:auto;
+}
+html {
+  position: relative;
+}
+body {
+  margin-bottom: 0px;
+  background-color: #EDEFF0;
+  font-size:12px;
+  min-width:600px;
+}
+.hot-info{
+	background-color: #FFF;
+	border-radius: 4px;
+	/*box-shadow: 0 1px 1px rgba(100,100,100,0.5);*/
+	min-height:40px;
+	padding:10px;
+	margin-top:20px;
+}
+.latest-info{
+	background-color: #FFF;
+	border-radius: 4px;
+	/*box-shadow: 0 1px 1px rgba(100,100,100,0.5);*/
+	min-height:40px;
+	padding:10px;
+	margin-top:20px;
+}
+.tool-info{
+	background-color: transparent;
+	border-radius: 4px;
+	min-height:40px;
+	padding:2px 2px 2px 2px;
+	margin-top:20px;
+}
+ul.hot, ul.latest{
+	list-style: none;
+	margin-bottom: 0px;
+}
+ul.hot li, ul.latest li{
+	margin:5px 0px;
+	word-wrap: break-word;
+}
+ul.hot li a, ul.latest li a{
+	font-size:14px;
+	line-height:15px;
+	color:#7F91AF;
+	margin-left:5px;
+	-webkit-transition: 0.4s
+}
+ul.hot li a:hover, ul.latest li a:hover{
+	color:#000;
+}
+@-webkit-keyframes twinkling{
+	0%{
+		opacity:0.4;
+		background-color: rgba(253, 56, 56, 0.3);
+	}
+	50%{
+		opacity:0.6;
+		background-color: rgba(253, 56, 56, 0.7);
+	}
+	100%{
+		opacity:0.4;
+		background-color: rgba(253, 56, 56, 0.3);
+	}
+}
+.blinking{
+	-webkit-animation:twinkling 1.2s infinite ease-in-out;
+	-moz-animation:twinkling 1.2s infinite ease-in-out;
+	animation:twinkling 1.2s infinite ease-in-out;
+}
+.muted{
+	color:#BBB;
+}
+h5 {
+	font-weight:300;
+	color:#BBB;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom:1px solid #EEE;
+}
+.fa-circle{
+	margin-right:5px;
+	color:#CDCDCD;
+}
+.avatar{
+	width: 15px;
+	height: 15px;
+	max-width: 15px;
+	max-height: 15px;
+	border-radius: 50%;
+	display: inline-block;
+	background-size: cover;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-color: rgba(0, 0, 0, 0);
+	margin-top: -4px;
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+hr {
+	border-top: 1px solid #CCC;
+}
+/*CSS3 loading*/
+#load_1{
+	padding-top:20px;
+	height:50px;
+}
+#load_2{
+	padding-top:20px;
+	height:50px;
+}
+.circleG{
+	background-color:#FFFFFF;
+	float:left;
+	height:12px;
+	margin-left:17px;
+	width:12px;
+	-webkit-animation-name:bounce_circleG;
+	-webkit-border-radius:21px;
+	-webkit-animation-duration:1s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-direction:linear;
+	opacity:0.3;
+}
+#circleG_1{
+	-webkit-animation-delay:0.2s;
+	background-color:#red;
+}
+#circleG_2{
+	-webkit-animation-delay:0.4s;
+}
+#circleG_3{
+	-webkit-animation-delay:0.6s;
+}
+#circleG_4{
+	-webkit-animation-delay:0.2s;
+	background-color:#red;
+}
+#circleG_5{
+	-webkit-animation-delay:0.4s;
+}
+#circleG_6{
+	-webkit-animation-delay:0.6s;
+}
+@-webkit-keyframes bounce_circleG{
+	0%{
+		opacity:0.3
+	}
+	50%{
+		opacity:1;
+		background-color:#000000
+	}
+	100%{
+		opacity:0.3
+	}
+	50%{
+		opacity:1;
+		background-color:#000000
+	}
+	100%{
+		opacity:0.3
+	}
+}
+/*CSS3 loading*/
+</style>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<!--hot-->
+			<div class="hot-info">
+				<h5>最热主题</h5>
+				<div id="load_1" class="loading">
+					<div id="circleG_1" class="circleG">
+					</div>
+					<div id="circleG_2" class="circleG">
+					</div>
+					<div id="circleG_3" class="circleG">
+					</div>
+				</div>
+				<ul class="hot">
+					<!--
+					<li><i class="fa fa-circle"></i><a href="[{$one.content}]" title="[{$one.content}]" target="_blank"></a></li>
+					-->
+				</ul>
+			</div>
+			<!--latest-->
+			<div class="latest-info">
+				<h5>最新主题</h5>
+				<div id="load_2" class="loading">
+					<div id="circleG_4" class="circleG">
+					</div>
+					<div id="circleG_5" class="circleG">
+					</div>
+					<div id="circleG_6" class="circleG">
+					</div>
+				</div>
+				<ul class="latest">
+					<!--
+					<li><i class="fa fa-circle"></i><a href="[{$one.content}]" title="[{$one.content}]" target="_blank"></a></li>
+					-->
+				</ul>
+			</div>
+
+			<hr>
+
+			<!--V2EX-->
+			<div class="tool-info">
+				<a class="pull-right" href="#" target="_blank" id="options">
+					<i class="fa fa-wrench"></i> 关于
+				</a>
+			</div>
+
+		</div> <!--col-md-12-->
+
+	</div>
+</div>
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/popup.js"></script>
+</body>
+</html>

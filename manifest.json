@@ -1,11 +1,16 @@
 {
   "name": "v2ex.ext",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "manifest_version": 2,
 
   "description": "V2EX Extension",
   "homepage_url": "https://github.com/jkeylu/v2ex.ext",
   "author": "jKey Lu",
+  "browser_action": {
+      "default_icon": "v2ex.ico",
+      "default_popup": "popup.html",
+      "default_title": "V2EX"
+   },
 
   "icons": {
     "16": "v2ex.ico",
