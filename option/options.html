@@ -3,6 +3,7 @@
   <head>
     <title>v2ex.ext</title>
     <link href="style.css" rel="stylesheet" type="text/css">
+    <script src="../js/jquery-2.1.1.min.js"></script>
     <script src="options.js"></script>
   </head>
   <body>
@@ -12,22 +13,25 @@
     </h1>
     <h2>配置</h2>
     <form id="options">
-      新消息检查频率：
-      <select name="frequency">
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>10</option>
-        <option>20</option>
-        <option>30</option>
-        <option>40</option>
-        <option>50</option>
-        <option>60</option>
-        <option>120</option>
-      </select>
-      分钟
+      <div>
+        新消息检查频率：
+        <select name="frequency">
+          <option value="0">关闭</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>10</option>
+          <option>20</option>
+          <option>30</option>
+          <option>40</option>
+          <option>50</option>
+          <option>60</option>
+          <option>120</option>
+        </select>
+        分钟
+      </div>
     </form>
   </body>
 </html>
